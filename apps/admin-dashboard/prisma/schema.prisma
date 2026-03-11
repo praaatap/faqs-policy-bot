@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  website   String?
+  faqs      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ChatLog {
+  id        String   @id @default(uuid())
+  sessionId String
+  companyId String
+  subject   String
+  question  String
+  answer    String
+  sources   String   // Stored as JSON string
+  createdAt DateTime @default(now())
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  filename  String
+  companyId String
+  subject   String
+  status    String   @default("uploaded") // uploaded, processing, failed, indexed
+  createdAt DateTime @default(now())
+}
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  key       String   @unique // e.g., sk_live_...
+  companyId String
+  name      String?  // Optional label for the key
+  createdAt DateTime @default(now())
+  lastUsed  DateTime?
+}

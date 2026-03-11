@@ -11,3 +11,10 @@ export interface ChatResponse {
   sources: string[];
   session_id: string;
 }
+
+export interface ChatRequest {
+  question: string;
+  session_id: string;
+  company_id: string;
+  subject: string;
+}

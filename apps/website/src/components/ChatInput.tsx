@@ -13,7 +13,7 @@ export default function ChatInput({ onSend, disabled }: Props) {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 100)}px`;
     }
   }, [input]);
 
@@ -32,24 +32,31 @@ export default function ChatInput({ onSend, disabled }: Props) {
   };
 
   return (
-    <div className="flex items-end gap-2 bg-gray-50 border border-gray-200 focus-within:border-blue-400 focus-within:bg-white rounded-2xl p-2 transition-all">
-      <textarea
-        ref={textareaRef}
-        rows={1}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Ask about policies, leave, benefits..."
-        disabled={disabled}
-        className="flex-1 resize-none bg-transparent px-3 py-2 text-sm text-gray-800 placeholder-gray-400 outline-none disabled:opacity-50 max-h-[120px] leading-relaxed"
-      />
+    <div className="flex items-end gap-2">
+
+      {/* Text Input */}
+      <div className="flex-1 flex items-end bg-white border border-gray-200 rounded-3xl px-4 py-2 shadow-sm focus-within:border-gray-300 transition-all">
+        <textarea
+          ref={textareaRef}
+          rows={1}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Message..."
+          disabled={disabled}
+          className="flex-1 resize-none bg-transparent text-sm text-gray-800 placeholder-gray-400 outline-none disabled:opacity-50 max-h-[100px] leading-relaxed py-1"
+        />
+      </div>
+
+      {/* Send Button */}
       <button
         onClick={handleSend}
         disabled={disabled || !input.trim()}
-        className="h-9 w-9 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all flex-shrink-0"
+        className="w-10 h-10 rounded-full bg-[#25D366] hover:bg-[#22c55e] flex items-center justify-center flex-shrink-0 shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all"
       >
-        <Send size={15} />
+        <Send size={16} className="text-white translate-x-[1px]" />
       </button>
+
     </div>
   );
 }

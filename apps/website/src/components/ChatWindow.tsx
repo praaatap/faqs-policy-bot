@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
-import { Trash2, Bot } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useChat } from "../hooks/useChat";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 import TypingIndicator from "./TypingIndicator";
+import { CustomLogo } from "./CustomLogo";
 
 const SUGGESTED = [
   "What is the leave policy?",
@@ -14,7 +15,7 @@ const SUGGESTED = [
 ];
 
 export default function ChatWindow() {
-  const { messages, isLoading, error, sendMessage, clearChat } = useChat();
+  const { messages, isLoading, error, sendMessage, clearChat, id, subs } = useChat();
   const bottomRef = useRef<HTMLDivElement>(null);
   const isFirst = messages.length === 1;
 
@@ -29,10 +30,10 @@ export default function ChatWindow() {
       <div className="flex items-center justify-between px-4 py-3 bg-[#075E54] flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-[#25D366] flex items-center justify-center">
-            <Bot size={18} className="text-white" />
+            <CustomLogo size={18} className="text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">Company Assistant</p>
+            <p className="text-sm font-semibold text-white">{id} {subs} Assistant</p>
             <p className="text-xs text-green-200 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-green-300 inline-block" />
               Online
@@ -66,7 +67,7 @@ export default function ChatWindow() {
               {/* Top row — icon + text inline */}
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center flex-shrink-0">
-                  <Bot size={18} className="text-white" />
+                  <CustomLogo size={18} className="text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-gray-900">Hi, how can I help?</p>
@@ -106,7 +107,7 @@ export default function ChatWindow() {
               className="flex items-end gap-2"
             >
               <div className="w-7 h-7 rounded-full bg-[#075E54] flex items-center justify-center flex-shrink-0">
-                <Bot size={13} className="text-white" />
+                <CustomLogo size={13} className="text-white" />
               </div>
               <div className="bg-white px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100">
                 <TypingIndicator />

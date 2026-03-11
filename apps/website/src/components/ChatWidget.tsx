@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { MessageCircle, X, Bot } from "lucide-react";
+import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ChatWindow from "./ChatWindow";
+import { CustomLogo } from "./CustomLogo";
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +21,7 @@ export default function ChatWidget() {
             onClick={() => setIsOpen(true)}
             className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#075E54] text-white flex items-center justify-center shadow-2xl shadow-black/30"
           >
-            <MessageCircle size={26} fill="white" strokeWidth={0} />
+            <CustomLogo size={26} className="text-white" />
           </motion.button>
         )}
       </AnimatePresence>

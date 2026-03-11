@@ -8,22 +8,21 @@ from app.config import settings
 
 router = APIRouter()
 
-# ---------- Models ----------
 class ChatRequest(BaseModel):
     question: str
     session_id: str = "default"
+    company_id: str = "default"
+    subject: str = "general"
 
 class ChatResponse(BaseModel):
     answer: str
     sources: list[str]
     session_id: str
 
-# ---------- Routes ----------
-
 @router.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     try:
-        chain = get_chain(req.session_id)
+        chain = get_chain(req.session_id, req.company_id, req.subject)
         result = chain({"question": req.question})
         sources = list({
             doc.metadata.get("source", "Unknown")
@@ -37,37 +36,37 @@ async def chat(req: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(
+    file: UploadFile = File(...),
+    company_id: str = "default",
+    subject: str = "general"
+):
     allowed = (".pdf", ".md", ".txt")
     if not file.filename.endswith(allowed):
-        raise HTTPException(status_code=400, detail="Only PDF, MD, TXT files allowed")
+        raise HTTPException(status_code=400, detail="Only PDF, MD, TXT allowed")
 
-    os.makedirs(settings.docs_path, exist_ok=True)
-    file_path = os.path.join(settings.docs_path, file.filename)
+    docs_path = os.path.join(settings.docs_path, company_id, subject)
+    os.makedirs(docs_path, exist_ok=True)
 
+    file_path = os.path.join(docs_path, file.filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    count = ingest_docs()
-    reset_vectorstore()  # Reload ChromaDB with new data
+    count = ingest_docs(company_id, subject)
+    reset_vectorstore(company_id, subject)
 
     return {"message": f"✅ {file.filename} uploaded", "chunks_ingested": count}
 
-
 @router.post("/ingest")
-async def trigger_ingest():
-    count = ingest_docs()
-    reset_vectorstore()
-    return {"message": "✅ Ingestion complete", "chunks_ingested": count}
-
+async def trigger_ingest(company_id: str = "default", subject: str = "general"):
+    count = ingest_docs(company_id, subject)
+    reset_vectorstore(company_id, subject)
+    return {"message": "✅ Done", "chunks_ingested": count}
 
 @router.get("/history/{session_id}")
 async def get_chat_history(session_id: str):
-    history = get_history(session_id)
-    return {"session_id": session_id, "history": history}
-
+    return {"session_id": session_id, "history": get_history(session_id)}
 
 @router.delete("/clear/{session_id}")
 async def clear_chat(session_id: str):
